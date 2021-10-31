@@ -28,11 +28,11 @@ module.exports.str2webpstr = (base64str,image_type,option,extra_path) => {
 };
 
 //convert buffer to webp buffer
-module.exports.buffer2webpbuffer = (buffer,image_type,option,extra_path) => {
+module.exports.buffer2webpbuffer = (buffer,image_type,option,extra_path,logging='-quiet') => {
   // buffer of image
   // buffer image type jpg,png ...
   //option: options and quality,it should be given between 0 to 100
-  return buffer_utils.buffer2webp(buffer,image_type,option,extra_path).then(function(val) {
+  return buffer_utils.buffer2webp(buffer,image_type,option,extra_path,logging).then(function(val) {
     return val
   });
 };
@@ -44,17 +44,18 @@ module.exports.cwebp = (input_image,output_image,option,logging='-quiet') => {
 //output_image: output image .webp 
 //option: options and quality,it should be given between 0 to 100
 
-const query = `${option} "${input_image}" -o "${output_image}" "${logging}"`; //command to convert image 
+const query = `${option} ${logging} "${input_image}" -o "${output_image}"`; //command to convert image 
 
 //enwebp() return which platform webp library should be used for conversion
 return new Promise((resolve, reject) => {
   //execute command 
-  exec(`"${enwebp()}"`,query.split(/\s+/),{ shell: true }, (error, stdout, stderr) => {
+  const child = exec(`"${enwebp()}"`,query.split(/\s+/),{ shell: true }, (error, stdout, stderr) => {
   if (error) {
    console.warn(error);
   }
   resolve(stdout? stdout : stderr);
  });
+ if (!logging.match('-quiet')) child.stderr.on('data', data => console.log(data))
 });
 };
 

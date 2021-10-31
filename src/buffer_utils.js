@@ -74,7 +74,7 @@ module.exports.base64str2webp = (base64str,image_type,option,extra_path) => {
 * @param  {string} option
  */
 // convert image buffer  to webp buffer
-module.exports.buffer2webp = (buffer,image_type,option,extra_path) => {
+module.exports.buffer2webp = (buffer,image_type,option,extra_path, logging) => {
 
     let buf = Buffer.from(buffer);
     let base64str = buf.toString('base64');
@@ -89,7 +89,7 @@ module.exports.buffer2webp = (buffer,image_type,option,extra_path) => {
     let status = base64_to_image(base64str,input_file_path)
 
     if(status){
-    const result = webp.cwebp(input_file_path,webp_image_path,option);
+    const result = webp.cwebp(input_file_path,webp_image_path,option, logging);
     return result.then((response) => {
         let webp_buffer = encode_image(webp_image_path,"buffer")
 
